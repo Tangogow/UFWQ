@@ -1,0 +1,9 @@
+[Unit]
+Description=Python Demo Service
+
+[Service]
+# Command to execute when the service is started
+ExecStart=/usr/bin/python3 /opt/
+
+[Install]
+WantedBy=default.target
