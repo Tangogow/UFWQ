@@ -4,12 +4,11 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-netfilterqueue = "*"
+NetfilterQueue = "*"
 scapy = "*"
 
 [dev-packages]
-pytest = "*"
 coverage = "*"
 
 [requires]
-python_version = "3.5"
+python_version = "2.7"

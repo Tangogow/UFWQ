@@ -1,15 +1,41 @@
 #!/usr/bin/python3
 
-from scapy.all import *
-from netfilterqueue import NetfilterQueue
-import datetime, sys
+# sudo iptables -I INPUT -d localhost -j NFQUEUE --queue-num 1
+# sudo python3 nfq.py
+# echo text | netcat 10.0.0.0 12
 
+import sys, subprocess, datetime
+from scapy.all import *
+#import urllib.request
+import config, protocols
+
+db = ""
 wl_addr = []
 bl_addr = []
 wl_rule = []
 bl_rule = []
 bl_port = [80, 443]
 debug = True
+
+def downloadDB():
+    with urllib.request.urlopen("http://urlhaus.abuse.ch/downloads/text_recent/") as f:
+        html = f.read().decode('utf-8')
+    return html
+
+def blockIP(ip, port):
+    if not port:
+        p = subprocess.Popen(["iptables", "-A", "INPUT", "-s", ip, "-j", "DROP"], stdout=subprocess.PIPE)
+        output , err = p.communicate()
+        print(output)
+    else:
+        p = subprocess.Popen(["iptables", "-A", "INPUT", "-s", ip, "-p", "tcp", "--destination-port", port, "-j", "DROP"], stdout=subprocess.PIPE)
+        output , err = p.communicate()
+        print(output)
+
+def blockPort(port):
+    p = subprocess.Popen(["iptables", "-A", "INPUT", "-s", ip, "-j", "DROP"], stdout=subprocess.PIPE)
+    output , err = p.communicate()
+    print(output)
 
 def logfile(message, info, packet):
     f = open('/var/log/nfqueue_' + str(datetime.date.today()), 'a+')
@@ -26,7 +52,7 @@ def printlog(message, info, packet=None, accept=None):
     else:
         pass
 
-def firewall(packet):
+def firewall2(packet):
     pkt = IP(packet.get_payload())
     src = pkt[IP].src
     dst = pkt[IP].dst
@@ -78,3 +104,23 @@ def firewall(packet):
                 printlog("BLOCKED PORT: ", str(bl_port), packet,  False)
             else:
                 printlog("SKIPPED: ", info, packet, False)
+
+if __name__ == '__main__':
+    print(""" MENU
+    Show blacklisted addresses
+    Show blacklisted rules
+
+    Show whitelisted rules
+    Show whitelistes addresses
+
+    Add rule
+    Delete rule
+
+    View log # tail /var/log
+
+    Show blocked ports
+    Show blacklisted database
+
+    """)
+    choice = input("Choice: ")
+    print(protocols.getPortNumber(choice))

@@ -18,13 +18,14 @@
 ### Usage
 
 ```bash
-pip3 install pipenv
+pip install pipenv
 ```
-
+apt install python-pip git libnfnetlink-dev libnetfilter-queue-dev
+build-essential libnetfilter-queue-dev python-dev ?
 ##### Local
 
 ```bash
-pipenv install --system --deploy --ignore-pipfile
+pipenv install --python 2.7 --system --deploy --ignore-pipfile # or --dev
 pipenv shell ufwq start
 
 # testing
